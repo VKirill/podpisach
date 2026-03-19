@@ -13,5 +13,13 @@ definePageMeta({ middleware: 'auth' })
       </div>
       <YandexMetrikaForm />
     </section>
+
+    <!-- Google Analytics -->
+    <section>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-lg font-semibold">🔵 Google Analytics</span>
+      </div>
+      <GoogleAnalyticsForm />
+    </section>
   </div>
 </template>

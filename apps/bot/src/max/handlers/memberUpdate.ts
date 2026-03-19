@@ -3,6 +3,7 @@ import { prisma } from '../../utils/prisma.js'
 import { correlate } from '../../attribution/correlator.js'
 import { logger } from '../../utils/logger.js'
 import type { MaxUpdate } from '../types.js'
+import { sendGaConversion } from '../../integrations/googleAnalytics.js'
 
 type ChannelRef = { id: number }
 
@@ -127,6 +128,10 @@ async function handleUserAdded(update: MaxUpdate): Promise<void> {
     },
     '✅ MAX subscriber joined (correlation)',
   )
+
+  sendGaConversion(subscriber.id, 'subscribe').catch((err) => {
+    logger.error({ err, subscriberId: subscriber.id }, 'GA conversion error on MAX join')
+  })
 }
 
 async function handleUserRemoved(update: MaxUpdate): Promise<void> {
@@ -181,6 +186,10 @@ async function handleUserRemoved(update: MaxUpdate): Promise<void> {
   })
 
   logger.info({ userId: user.user_id, channelId: channel.id }, '👋 MAX subscriber left')
+
+  sendGaConversion(subscriber.id, 'unsubscribe').catch((err) => {
+    logger.error({ err, subscriberId: subscriber.id }, 'GA conversion error on MAX leave')
+  })
 }
 
 function isPrismaUniqueError(err: unknown): boolean {
