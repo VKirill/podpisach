@@ -55,6 +55,12 @@ export const settingsSchema = z.object({
   maxCorrelationWindowSec: z.number().int().min(10).max(300).optional(),
 })
 
+// Смена пароля администратора
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(200),
+  newPassword: z.string().min(8).max(200),
+})
+
 // Создание публичного отчёта для клиента
 export const createReportSchema = z.object({
   channelId: z.number().int().positive(),
