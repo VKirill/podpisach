@@ -92,3 +92,20 @@ export const updateReportSchema = z.object({
 export const reportPasswordSchema = z.object({
   password: z.string().min(1).max(200),
 })
+
+// Яндекс Метрика: сохранение OAuth-ключей приложения
+export const ymCredentialsSchema = z.object({
+  clientId: z.string().min(1).max(200),
+  clientSecret: z.string().min(1).max(200),
+})
+
+// Яндекс Метрика: привязка счётчика к каналу
+export const ymCounterBindSchema = z.object({
+  counterId: z.number().int().positive(),
+})
+
+// Яндекс Метрика: обновление настроек цели канала
+export const ymGoalPatchSchema = z.object({
+  customName: z.string().min(1).max(200).optional(),
+  isEnabled: z.boolean(),
+})
