@@ -1,7 +1,8 @@
 import { z } from 'zod'
 
 const querySchema = z.object({
-  channelId: z.coerce.number().int().positive(),
+  // channelId опционален: если не указан — экспорт всех подписчиков
+  channelId: z.coerce.number().int().positive().optional(),
   status: z.enum(['active', 'left', 'kicked', 'banned']).optional(),
 })
 
@@ -26,13 +27,13 @@ export default defineEventHandler(async (event) => {
   const parsed = querySchema.safeParse(rawQuery)
 
   if (!parsed.success) {
-    throw createError({ statusCode: 400, message: 'channelId обязателен и должен быть числом' })
+    throw createError({ statusCode: 400, message: 'Неверные параметры запроса' })
   }
 
   const { channelId, status } = parsed.data
 
   const where = {
-    channelId,
+    ...(channelId ? { channelId } : {}),
     ...(status ? { status } : {}),
   }
 
@@ -60,7 +61,9 @@ export default defineEventHandler(async (event) => {
   })
 
   const date = new Date().toISOString().slice(0, 10)
-  const filename = `subscribers-${channelId}-${date}.csv`
+  const filename = channelId
+    ? `subscribers-${channelId}-${date}.csv`
+    : `subscribers-all-${date}.csv`
 
   setResponseHeaders(event, {
     'Content-Type': 'text/csv; charset=utf-8',
