@@ -3,7 +3,7 @@
 const PUBLIC_PREFIXES = [
   '/api/auth/',
   '/api/setup/',
-  '/api/track/',
+  '/api/track',
   '/api/report/',
   '/api/internal/',
 ]

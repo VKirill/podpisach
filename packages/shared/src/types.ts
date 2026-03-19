@@ -49,6 +49,7 @@ export interface TrackResponse {
   sessionId: string
   invite_url?: string
   max_channel_url?: string
+  ym_counter_id?: string
 }
 
 // Запрос создания invite-ссылки (app → bot internal API)
