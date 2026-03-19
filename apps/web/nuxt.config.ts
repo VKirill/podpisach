@@ -1,11 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/ui'],
+  // SPA mode — no SSR hydration issues, perfect for self-hosted admin panel
+  ssr: false,
 
-  // Fix hydration mismatch: force color-mode to use class without suffix
-  colorMode: {
-    classSuffix: '',
-  },
+  modules: ['@nuxt/ui'],
 
   css: ['~/assets/css/main.css'],
 
