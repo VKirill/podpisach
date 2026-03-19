@@ -22,11 +22,25 @@ function recordRateLimitUse(channelId: number): void {
   rateLimitMap.set(channelId, timestamps)
 }
 
+export interface ManualLinkData {
+  name?: string
+  utmSource?: string
+  utmMedium?: string
+  utmCampaign?: string
+  utmContent?: string
+  utmTerm?: string
+  costAmount?: number
+  costCurrency?: string
+}
+
 export async function createInviteLink(
   bot: Bot,
   channelId: number,
-  visitId: number,
+  visitId?: number,
+  manualData?: ManualLinkData,
 ): Promise<{ url: string; linkId: number } | null> {
+  const isManual = visitId === undefined
+
   const channel = await prisma.channel.findUnique({
     where: { id: channelId },
     select: { id: true, platformChatId: true, linkTtlHours: true },
@@ -42,37 +56,60 @@ export async function createInviteLink(
     return null
   }
 
-  const expiresAt = new Date(Date.now() + channel.linkTtlHours * 3_600_000)
-  const expireDate = Math.floor(expiresAt.getTime() / 1000)
-
   let inviteLinkUrl: string
   try {
-    const result = await withRetry(() =>
-      bot.api.createChatInviteLink(channel.platformChatId, {
-        member_limit: 1,
-        expire_date: expireDate,
-      }),
-    )
-    inviteLinkUrl = result.invite_link
+    if (isManual) {
+      // Ручная ссылка: без member_limit и expire_date (бессрочная)
+      const result = await withRetry(() =>
+        bot.api.createChatInviteLink(channel.platformChatId, {}),
+      )
+      inviteLinkUrl = result.invite_link
+    } else {
+      const expiresAt = new Date(Date.now() + channel.linkTtlHours * 3_600_000)
+      const expireDate = Math.floor(expiresAt.getTime() / 1000)
+      const result = await withRetry(() =>
+        bot.api.createChatInviteLink(channel.platformChatId, {
+          member_limit: 1,
+          expire_date: expireDate,
+        }),
+      )
+      inviteLinkUrl = result.invite_link
+    }
   } catch (err) {
-    logger.error({ channelId, visitId, err }, 'Failed to create invite link via Telegram API')
+    logger.error({ channelId, visitId, isManual, err }, 'Failed to create invite link via Telegram API')
     return null
   }
 
   recordRateLimitUse(channelId)
 
+  const expiresAt = isManual
+    ? null
+    : new Date(Date.now() + channel.linkTtlHours * 3_600_000)
+
   const link = await prisma.inviteLink.create({
     data: {
       channelId: channel.id,
-      visitId,
+      visitId: isManual ? undefined : visitId,
       url: inviteLinkUrl,
-      type: 'auto',
-      expiresAt,
+      type: isManual ? 'manual' : 'auto',
+      expiresAt: expiresAt ?? undefined,
+      ...(isManual && manualData
+        ? {
+            name: manualData.name,
+            utmSource: manualData.utmSource,
+            utmMedium: manualData.utmMedium,
+            utmCampaign: manualData.utmCampaign,
+            utmContent: manualData.utmContent,
+            utmTerm: manualData.utmTerm,
+            costAmount: manualData.costAmount,
+            costCurrency: manualData.costCurrency,
+          }
+        : {}),
     },
     select: { id: true },
   })
 
-  logger.info({ linkId: link.id, channelId, visitId }, 'Created invite link')
+  logger.info({ linkId: link.id, channelId, visitId, isManual }, 'Created invite link')
   return { url: inviteLinkUrl, linkId: link.id }
 }
 
