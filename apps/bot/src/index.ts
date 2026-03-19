@@ -3,6 +3,7 @@ import { loadConfig } from './config/index.js'
 import { createTelegramBot, startBot, stopBot } from './telegram/bot.js'
 import { startLinkCleanupJob } from './jobs/linkCleanup.js'
 import { startStatsSyncJob } from './jobs/statsSync.js'
+import { startConversionRetryJob } from './jobs/conversionRetry.js'
 import { prisma } from './utils/prisma.js'
 import { logger } from './utils/logger.js'
 import { decrypt } from '@op/shared'
@@ -13,6 +14,7 @@ const POLL_INTERVAL_MS = 5_000
 let isShuttingDown = false
 let linkCleanupTask: ScheduledTask | null = null
 let statsSyncTask: ScheduledTask | null = null
+let conversionRetryTask: ScheduledTask | null = null
 
 async function pollForToken(internalApiSecret: string): Promise<string> {
   logger.info('⏳ No bot token configured. Polling DB every 5s...')
@@ -56,6 +58,7 @@ async function main(): Promise<void> {
 
   linkCleanupTask = startLinkCleanupJob()
   statsSyncTask = startStatsSyncJob()
+  conversionRetryTask = startConversionRetryJob()
 }
 
 const shutdown = async (): Promise<void> => {
@@ -66,6 +69,7 @@ const shutdown = async (): Promise<void> => {
 
   linkCleanupTask?.stop()
   statsSyncTask?.stop()
+  conversionRetryTask?.stop()
 
   await stopInternalApi()
   await stopBot()

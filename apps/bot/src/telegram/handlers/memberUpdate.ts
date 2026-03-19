@@ -4,6 +4,7 @@ import type { Prisma } from '@prisma/client'
 import { prisma } from '../../utils/prisma.js'
 import { logger } from '../../utils/logger.js'
 import { revokeInviteLink } from '../services/linkService.js'
+import { correlate } from '../../attribution/correlator.js'
 
 type ChannelRef = { id: number }
 type LeaveStatus = 'left' | 'kicked' | 'banned'
@@ -64,47 +65,81 @@ async function handleJoin(
   inviteLinkData: ChatInviteLink | undefined,
   rawData: Prisma.InputJsonValue,
 ): Promise<void> {
-  const inviteLink = inviteLinkData?.invite_link
-    ? await prisma.inviteLink.findFirst({
-        where: {
-          url: inviteLinkData.invite_link,
-          channelId: channel.id,
-          isRevoked: false,
-        },
-        include: { visit: true },
-      })
-    : null
+  const attribution = await correlate('telegram', channel.id, String(user.id), inviteLinkData?.invite_link)
 
-  const subscriber = await prisma.subscriber.upsert({
-    where: {
-      channelId_platform_platformUserId: {
+  let subscriber: { id: number }
+  try {
+    subscriber = await prisma.subscriber.upsert({
+      where: {
+        channelId_platform_platformUserId: {
+          channelId: channel.id,
+          platform: 'telegram',
+          platformUserId: String(user.id),
+        },
+      },
+      create: {
         channelId: channel.id,
         platform: 'telegram',
         platformUserId: String(user.id),
+        firstName: user.first_name,
+        lastName: user.last_name ?? null,
+        username: user.username ?? null,
+        inviteLinkId: attribution.inviteLinkId,
+        visitId: attribution.visitId,
+        attributionConfidence: attribution.confidence,
+        status: 'active',
+        subscribedAt: new Date(),
       },
-    },
-    create: {
-      channelId: channel.id,
-      platform: 'telegram',
-      platformUserId: String(user.id),
-      firstName: user.first_name,
-      lastName: user.last_name ?? null,
-      username: user.username ?? null,
-      inviteLinkId: inviteLink?.id ?? null,
-      visitId: inviteLink?.visit?.id ?? null,
-      attributionConfidence: 1.0,
-      status: 'active',
-      subscribedAt: new Date(),
-    },
-    update: {
-      status: 'active',
-      firstName: user.first_name,
-      lastName: user.last_name ?? null,
-      username: user.username ?? null,
-      subscribedAt: new Date(),
-      leftAt: null,
-    },
-  })
+      update: {
+        status: 'active',
+        firstName: user.first_name,
+        lastName: user.last_name ?? null,
+        username: user.username ?? null,
+        subscribedAt: new Date(),
+        leftAt: null,
+      },
+    })
+  } catch (err: unknown) {
+    // visitId @unique constraint violated — another subscriber already has this visitId
+    if (isPrismaUniqueError(err) && attribution.visitId !== null) {
+      logger.warn(
+        { userId: user.id, channelId: channel.id, visitId: attribution.visitId },
+        'visitId already claimed by another subscriber, retrying without visitId',
+      )
+      subscriber = await prisma.subscriber.upsert({
+        where: {
+          channelId_platform_platformUserId: {
+            channelId: channel.id,
+            platform: 'telegram',
+            platformUserId: String(user.id),
+          },
+        },
+        create: {
+          channelId: channel.id,
+          platform: 'telegram',
+          platformUserId: String(user.id),
+          firstName: user.first_name,
+          lastName: user.last_name ?? null,
+          username: user.username ?? null,
+          inviteLinkId: attribution.inviteLinkId,
+          visitId: null,
+          attributionConfidence: attribution.confidence,
+          status: 'active',
+          subscribedAt: new Date(),
+        },
+        update: {
+          status: 'active',
+          firstName: user.first_name,
+          lastName: user.last_name ?? null,
+          username: user.username ?? null,
+          subscribedAt: new Date(),
+          leftAt: null,
+        },
+      })
+    } else {
+      throw err
+    }
+  }
 
   await prisma.subscriptionEvent.create({
     data: { subscriberId: subscriber.id, eventType: 'joined', rawData },
@@ -115,20 +150,30 @@ async function handleJoin(
     data: { subscriberCount: { increment: 1 } },
   })
 
-  if (inviteLink) {
+  if (attribution.inviteLinkId !== null) {
     await prisma.inviteLink.update({
-      where: { id: inviteLink.id },
+      where: { id: attribution.inviteLinkId },
       data: { joinCount: { increment: 1 } },
     })
 
-    // Auto-revoke invite link after subscription (R1: critical for TG API limits)
-    if (inviteLink.type === 'auto') {
-      await revokeInviteLink(bot, inviteLink.id)
+    // Auto-revoke after joinCount increment (R1: critical for TG API limits)
+    const inviteLink = await prisma.inviteLink.findUnique({
+      where: { id: attribution.inviteLinkId },
+      select: { type: true },
+    })
+
+    if (inviteLink?.type === 'auto') {
+      await revokeInviteLink(bot, attribution.inviteLinkId)
     }
   }
 
   logger.info(
-    { userId: user.id, channelId: channel.id, hasInviteLink: !!inviteLink },
+    {
+      userId: user.id,
+      channelId: channel.id,
+      method: attribution.method,
+      confidence: attribution.confidence,
+    },
     '✅ New subscriber joined',
   )
 }
@@ -181,4 +226,13 @@ function mapLeaveStatus(newStatus: LeaveStatus): 'left' | 'kicked' | 'banned' {
   if (newStatus === 'left') return 'left'
   if (newStatus === 'kicked') return 'kicked'
   return 'banned'
+}
+
+function isPrismaUniqueError(err: unknown): boolean {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'code' in err &&
+    (err as { code: string }).code === 'P2002'
+  )
 }
