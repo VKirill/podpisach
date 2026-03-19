@@ -41,10 +41,8 @@ WORKDIR /app
 # Copy Nuxt output (self-contained SSR bundle)
 COPY --from=build /app/apps/web/.output .output
 
-# Copy Prisma client (native module — not bundled by Nitro)
-COPY --from=build /app/node_modules/.prisma node_modules/.prisma
-COPY --from=build /app/node_modules/@prisma node_modules/@prisma
-COPY --from=build /app/node_modules/prisma node_modules/prisma
+# Copy Prisma client — pnpm stores it in .pnpm, copy entire node_modules for compatibility
+COPY --from=build /app/node_modules node_modules
 
 # Copy Prisma schema and migrations (needed for migrate deploy)
 COPY --from=build /app/prisma prisma
