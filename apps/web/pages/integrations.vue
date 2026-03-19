@@ -3,11 +3,15 @@ definePageMeta({ middleware: 'auth' })
 </script>
 
 <template>
-  <div>
-    <EmptyState
-      icon="i-heroicons-link"
-      title="Интеграции"
-      description="Подключите Яндекс Метрику или Google Analytics для отправки конверсий."
-    />
+  <div class="space-y-8">
+    <h1 class="text-2xl font-bold">Интеграции</h1>
+
+    <!-- Яндекс Метрика -->
+    <section>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-lg font-semibold">🟡 Яндекс Метрика</span>
+      </div>
+      <YandexMetrikaForm />
+    </section>
   </div>
 </template>
