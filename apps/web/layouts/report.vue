@@ -9,7 +9,7 @@
         <div class="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
           <span class="text-white font-bold text-xs">ОП</span>
         </div>
-        <span class="font-medium text-sm text-gray-700 dark:text-gray-300">Откуда подписчик</span>
+        <span class="font-medium text-sm text-gray-700 dark:text-gray-300">ПодписачЪ</span>
         <UBadge label="Публичный отчёт" color="neutral" variant="subtle" size="xs" class="ml-auto" />
       </div>
     </header>

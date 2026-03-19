@@ -32,7 +32,7 @@ const generatedCode = computed(() => {
   const href = username ? `https://t.me/${username}` : '#'
 
   return [
-    '<!-- Откуда подписчик — трекинг -->',
+    '<!-- ПодписачЪ — трекинг -->',
     scriptOpen + '>',
     `window.__OP_API = '${appUrl}';`,
     `window.__OP_CHANNEL = '${id}';`,

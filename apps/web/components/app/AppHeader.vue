@@ -9,7 +9,7 @@ const pageTitle = computed(() => {
   if (matched) return matched.label
   if (route.path.startsWith('/channels/')) return 'Канал'
   if (route.path.startsWith('/r/')) return 'Публичный отчёт'
-  return 'Откуда подписчик'
+  return 'ПодписачЪ'
 })
 
 function toggleColorMode() {

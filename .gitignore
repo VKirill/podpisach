@@ -8,3 +8,5 @@ dist/
 .prisma/
 backups/
 *.tsbuildinfo
+.claude/
+.serena/

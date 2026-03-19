@@ -209,7 +209,7 @@ function sourceLabel(source: string | null, medium: string | null): string {
     <div class="text-center pt-4 pb-8">
       <p class="text-sm text-gray-400 dark:text-gray-500">
         Отчёт создан через
-        <span class="font-medium text-gray-500 dark:text-gray-400">«Откуда подписчик»</span>
+        <span class="font-medium text-gray-500 dark:text-gray-400">«ПодписачЪ»</span>
         — open-source система атрибуции подписчиков Telegram-каналов
       </p>
     </div>

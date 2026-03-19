@@ -1,6 +1,6 @@
 export function useAuth() {
   const authenticated = useState<boolean>('auth', () => false)
-  const setupCompleted = useState<boolean>('setup', () => true)
+  const setupCompleted = useState<boolean>('setup', () => false)
   const loading = useState<boolean>('auth-loading', () => true)
 
   async function checkSession(): Promise<void> {

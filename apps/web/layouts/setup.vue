@@ -10,7 +10,7 @@ const progressWidth = computed(() => `${(currentStep.value / totalSteps) * 100}%
       <div class="inline-flex items-center justify-center w-12 h-12 bg-primary-600 rounded-xl mb-4">
         <span class="text-white font-bold text-lg">ОП</span>
       </div>
-      <h1 class="text-xl font-bold text-gray-900 dark:text-white">Откуда подписчик</h1>
+      <h1 class="text-xl font-bold text-gray-900 dark:text-white">ПодписачЪ</h1>
       <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Первоначальная настройка</p>
     </div>
 

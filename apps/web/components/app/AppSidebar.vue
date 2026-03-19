@@ -12,7 +12,7 @@ const { logout } = useAuth()
         <span class="text-white font-bold text-sm">ОП</span>
       </div>
       <div class="min-w-0">
-        <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">Откуда подписчик</p>
+        <p class="font-semibold text-sm text-gray-900 dark:text-white truncate">ПодписачЪ</p>
         <p class="text-xs text-gray-500 dark:text-gray-400">v{{ APP_VERSION }}</p>
       </div>
     </div>
