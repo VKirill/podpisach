@@ -2,9 +2,20 @@
 definePageMeta({ layout: 'setup', middleware: 'setup' })
 
 const { checkStatus } = useSetup()
-await checkStatus()
+
+onMounted(async () => {
+  await checkStatus()
+})
 </script>
 
 <template>
-  <SetupWizard />
+  <ClientOnly>
+    <SetupWizard />
+    <template #fallback>
+      <div class="text-center py-8">
+        <div class="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full mx-auto mb-4" />
+        <p class="text-gray-500">Загрузка...</p>
+      </div>
+    </template>
+  </ClientOnly>
 </template>

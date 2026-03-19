@@ -2,6 +2,11 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
 
+  // Fix hydration mismatch: force color-mode to use class without suffix
+  colorMode: {
+    classSuffix: '',
+  },
+
   css: ['~/assets/css/main.css'],
 
   runtimeConfig: {
