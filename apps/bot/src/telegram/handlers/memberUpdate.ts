@@ -3,6 +3,7 @@ import type { ChatInviteLink, User } from 'grammy/types'
 import type { Prisma } from '@prisma/client'
 import { prisma } from '../../utils/prisma.js'
 import { logger } from '../../utils/logger.js'
+import { revokeInviteLink } from '../services/linkService.js'
 
 type ChannelRef = { id: number }
 type LeaveStatus = 'left' | 'kicked' | 'banned'
@@ -32,7 +33,7 @@ export function setupMemberUpdateHandler(bot: Bot): void {
       const rawData = ctx.update as unknown as Prisma.InputJsonValue
 
       if (isJoin(oldStatus, newStatus)) {
-        await handleJoin(channel, newMember.user, update.invite_link, rawData)
+        await handleJoin(bot, channel, newMember.user, update.invite_link, rawData)
       } else if (isLeave(oldStatus, newStatus)) {
         await handleLeave(channel, newMember.user, newStatus as LeaveStatus, rawData)
       }
@@ -57,6 +58,7 @@ function isLeave(oldStatus: string, newStatus: string): boolean {
 }
 
 async function handleJoin(
+  bot: Bot,
   channel: ChannelRef,
   user: User,
   inviteLinkData: ChatInviteLink | undefined,
@@ -118,6 +120,11 @@ async function handleJoin(
       where: { id: inviteLink.id },
       data: { joinCount: { increment: 1 } },
     })
+
+    // Auto-revoke invite link after subscription (R1: critical for TG API limits)
+    if (inviteLink.type === 'auto') {
+      await revokeInviteLink(bot, inviteLink.id)
+    }
   }
 
   logger.info(
