@@ -1,0 +1,323 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ========== Настройки (singleton, id=1) ==========
+
+model Settings {
+  id                      Int      @id @default(1)
+  adminPasswordHash       String?  // null = первый запуск → Setup Wizard
+  sessionSecret           String   @default(uuid())
+  timezone                String   @default("Europe/Moscow")
+  maxCorrelationWindowSec Int      @default(60)
+  internalApiSecret       String   @default(uuid())
+  setupCompleted          Boolean  @default(false)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
+// ========== Боты ==========
+
+model Bot {
+  id          Int       @id @default(autoincrement())
+  platform    Platform
+  token       String    // Зашифрован AES-256
+  botUsername String?
+  botName     String?
+  isActive    Boolean   @default(true)
+  channels    Channel[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([platform, token])
+}
+
+// ========== Каналы ==========
+
+model Channel {
+  id              Int              @id @default(autoincrement())
+  bot             Bot              @relation(fields: [botId], references: [id])
+  botId           Int
+  platform        Platform
+  platformChatId  String
+  title           String
+  username        String?
+  isPrivate       Boolean          @default(true)
+  subscriberCount Int              @default(0)
+  linkTtlHours    Int              @default(24)
+  isActive        Boolean          @default(true)
+  inviteLinks     InviteLink[]
+  subscribers     Subscriber[]
+  visits          Visit[]
+  publicReports   PublicReport[]
+  channelCounters ChannelCounter[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([platform, platformChatId])
+}
+
+// ========== Invite-ссылки ==========
+
+model InviteLink {
+  id           Int          @id @default(autoincrement())
+  channel      Channel      @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId    Int
+  visit        Visit?       @relation("VisitInviteLink", fields: [visitId], references: [id])
+  visitId      Int?         @unique
+  url          String
+  name         String?
+  type         LinkType     @default(auto)
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmContent   String?
+  utmTerm      String?
+  costAmount   Float?
+  costCurrency String?
+  clickCount   Int          @default(0)
+  joinCount    Int          @default(0)
+  isRevoked    Boolean      @default(false)
+  expiresAt    DateTime?
+  subscribers  Subscriber[]
+  createdAt    DateTime     @default(now())
+
+  @@index([channelId, isRevoked])
+  @@index([expiresAt])
+  @@index([type])
+}
+
+// ========== Визиты ==========
+
+model Visit {
+  id          Int          @id @default(autoincrement())
+  sessionId   String       @unique @default(uuid())
+  channel     Channel?     @relation(fields: [channelId], references: [id])
+  channelId   Int?
+  platform    Platform     @default(telegram)
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  utmTerm     String?
+  yclid       String?
+  gclid       String?
+  referrer    String?
+  pageUrl     String?
+  fingerprint String?
+  ipHash      String?
+  inviteLink  InviteLink?  @relation("VisitInviteLink")
+  subscriber  Subscriber?  @relation("VisitSubscriber")
+  conversions Conversion[]
+  createdAt   DateTime     @default(now())
+
+  @@index([platform, createdAt])
+  @@index([fingerprint, createdAt])
+  @@index([ipHash, createdAt])
+  @@index([yclid])
+  @@index([gclid])
+  @@index([channelId, createdAt])
+}
+
+// ========== Подписчики ==========
+
+model Subscriber {
+  id                    Int                 @id @default(autoincrement())
+  channel               Channel             @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId             Int
+  inviteLink            InviteLink?         @relation(fields: [inviteLinkId], references: [id])
+  inviteLinkId          Int?
+  visit                 Visit?              @relation("VisitSubscriber", fields: [visitId], references: [id])
+  visitId               Int?                @unique
+  platform              Platform
+  platformUserId        String
+  firstName             String?
+  lastName              String?
+  username              String?
+  attributionConfidence Float               @default(1.0)
+  status                SubscriberStatus    @default(active)
+  subscribedAt          DateTime            @default(now())
+  leftAt                DateTime?
+  events                SubscriptionEvent[]
+  conversions           Conversion[]
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([channelId, platform, platformUserId])
+  @@index([channelId, status])
+  @@index([subscribedAt])
+  @@index([inviteLinkId])
+  @@index([platform, platformUserId])
+}
+
+// ========== События подписки (immutable log) ==========
+
+model SubscriptionEvent {
+  id           Int        @id @default(autoincrement())
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Cascade)
+  subscriberId Int
+  eventType    EventType
+  rawData      Json?
+  createdAt    DateTime   @default(now())
+
+  @@index([subscriberId, createdAt])
+  @@index([eventType, createdAt])
+}
+
+// ========== Публичные отчёты ==========
+
+model PublicReport {
+  id                  Int      @id @default(autoincrement())
+  channel             Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId           Int
+  token               String   @unique @default(uuid())
+  passwordHash        String?
+  name                String
+  showSubscriberNames Boolean  @default(false)
+  showUtmDetails      Boolean  @default(true)
+  showCosts           Boolean  @default(true)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+// ========== Яндекс Метрика ==========
+
+model YandexMetrikaAccount {
+  id             Int                    @id @default(autoincrement())
+  clientId       String
+  clientSecret   String                 // зашифрован
+  accessToken    String?                // зашифрован
+  refreshToken   String?                // зашифрован
+  tokenExpiresAt DateTime?
+  yaLogin        String?
+  isConnected    Boolean                @default(false)
+  counters       YandexMetrikaCounter[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+}
+
+model YandexMetrikaCounter {
+  id              Int                  @id @default(autoincrement())
+  account         YandexMetrikaAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId       Int
+  yandexCounterId String
+  counterName     String
+  counterSite     String?
+  channels        ChannelCounter[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@unique([accountId, yandexCounterId])
+}
+
+model ChannelCounter {
+  id        Int                  @id @default(autoincrement())
+  channel   Channel              @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId Int
+  counter   YandexMetrikaCounter @relation(fields: [counterId], references: [id], onDelete: Cascade)
+  counterId Int
+  goals     ChannelGoalConfig[]
+  createdAt DateTime             @default(now())
+
+  @@unique([channelId, counterId])
+}
+
+model ChannelGoalConfig {
+  id               Int            @id @default(autoincrement())
+  channelCounter   ChannelCounter @relation(fields: [channelCounterId], references: [id], onDelete: Cascade)
+  channelCounterId Int
+  goalKey          GoalKey
+  customName       String?
+  isEnabled        Boolean        @default(true)
+  yandexGoalId     String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([channelCounterId, goalKey])
+}
+
+// ========== Интеграции (GA) ==========
+
+model Integration {
+  id          Int              @id @default(autoincrement())
+  type        IntegrationType
+  config      Json
+  isActive    Boolean          @default(true)
+  lastSyncAt  DateTime?
+  conversions Conversion[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([type])
+}
+
+// ========== Конверсии ==========
+
+model Conversion {
+  id            Int              @id @default(autoincrement())
+  visit         Visit            @relation(fields: [visitId], references: [id])
+  visitId       Int
+  subscriber    Subscriber       @relation(fields: [subscriberId], references: [id])
+  subscriberId  Int
+  integration   Integration      @relation(fields: [integrationId], references: [id])
+  integrationId Int
+  status        ConversionStatus @default(pending)
+  errorMessage  String?
+  sentAt        DateTime?
+  retryCount    Int              @default(0)
+  createdAt     DateTime         @default(now())
+
+  @@index([status])
+  @@index([integrationId, status])
+  @@index([createdAt])
+}
+
+// ========== Enums ==========
+
+enum Platform {
+  telegram
+  max
+}
+
+enum LinkType {
+  auto
+  manual
+}
+
+enum SubscriberStatus {
+  active
+  left
+  kicked
+  banned
+}
+
+enum EventType {
+  joined
+  left
+  kicked
+  banned
+}
+
+enum IntegrationType {
+  yandex_metrika
+  google_analytics
+}
+
+enum ConversionStatus {
+  pending
+  sent
+  failed
+}
+
+enum GoalKey {
+  op_visit
+  op_click
+  op_subscribe
+  op_unsubscribe
+  op_resubscribe
+}
