@@ -111,7 +111,7 @@ export default defineEventHandler(async (event) => {
       where: { id: existingChannel.id },
       data: { isActive: true, botId: bot.id },
     })
-    return { success: true, channelId: updated.id }
+    return { success: true, channelId: updated.id, channelTitle: existingChannel.title }
   }
 
   const channel = await prisma.channel.create({
@@ -127,5 +127,5 @@ export default defineEventHandler(async (event) => {
     },
   })
 
-  return { success: true, channelId: channel.id }
+  return { success: true, channelId: channel.id, channelTitle: chatInfo.title }
 })
