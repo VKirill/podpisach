@@ -5,6 +5,7 @@ const PUBLIC_PREFIXES = [
   '/api/setup/',
   '/api/track',
   '/api/report/',
+  '/api/reports/',
   '/api/internal/',
 ]
 

@@ -77,3 +77,18 @@ export const createReportSchema = z.object({
   showUtmDetails: z.boolean().optional().default(true),
   showCosts: z.boolean().optional().default(true),
 })
+
+// Обновление настроек публичного отчёта
+export const updateReportSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  password: z.string().min(4).max(200).optional().nullable(),
+  showSubscriberNames: z.boolean().optional(),
+  showUtmDetails: z.boolean().optional(),
+  showCosts: z.boolean().optional(),
+  isActive: z.boolean().optional(),
+})
+
+// Проверка пароля публичного отчёта
+export const reportPasswordSchema = z.object({
+  password: z.string().min(1).max(200),
+})
