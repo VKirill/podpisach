@@ -1,7 +1,7 @@
 import http from 'node:http'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
-import { createInviteLink, revokeInviteLink } from '../telegram/services/linkService.js'
+import { createInviteLink, revokeInviteLink, type ManualLinkData } from '../telegram/services/linkService.js'
 import { createTelegramBot, startBot, stopBot, getBot } from '../telegram/bot.js'
 import { decrypt } from '@op/shared'
 
@@ -72,9 +72,24 @@ async function handleLinkCreate(
   }
 
   const channelId = body['channelId'] as number
-  const visitId = body['visitId'] as number
+  const visitId = body['visitId'] as number | undefined
 
-  const result = await createInviteLink(bot, channelId, visitId)
+  // Собираем manualData только если visitId не передан (ручная ссылка)
+  const manualData: ManualLinkData | undefined =
+    visitId === undefined
+      ? {
+          name: body['name'] as string | undefined,
+          utmSource: body['utmSource'] as string | undefined,
+          utmMedium: body['utmMedium'] as string | undefined,
+          utmCampaign: body['utmCampaign'] as string | undefined,
+          utmContent: body['utmContent'] as string | undefined,
+          utmTerm: body['utmTerm'] as string | undefined,
+          costAmount: body['costAmount'] as number | undefined,
+          costCurrency: body['costCurrency'] as string | undefined,
+        }
+      : undefined
+
+  const result = await createInviteLink(bot, channelId, visitId, manualData)
   if (!result) {
     res.writeHead(429)
     res.end(JSON.stringify({ error: 'Rate limit or channel not found' }))
