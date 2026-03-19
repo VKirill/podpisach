@@ -6,6 +6,7 @@ import { startStatsSyncJob } from './jobs/statsSync.js'
 import { prisma } from './utils/prisma.js'
 import { logger } from './utils/logger.js'
 import { decrypt } from '@op/shared'
+import { startInternalApi, stopInternalApi } from './api/internal.js'
 
 const POLL_INTERVAL_MS = 5_000
 
@@ -38,6 +39,8 @@ async function main(): Promise<void> {
 
   const config = await loadConfig()
 
+  await startInternalApi(3001)
+
   let token: string
 
   if (config.telegramToken) {
@@ -64,6 +67,7 @@ const shutdown = async (): Promise<void> => {
   linkCleanupTask?.stop()
   statsSyncTask?.stop()
 
+  await stopInternalApi()
   await stopBot()
   await prisma.$disconnect()
 
