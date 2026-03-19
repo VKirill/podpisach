@@ -49,6 +49,13 @@ export const createLinkSchema = z.object({
   costCurrency: z.enum([...CURRENCIES] as [string, ...string[]]).optional(),
 })
 
+// Обновление затрат/названия ручной ссылки
+export const updateLinkSchema = z.object({
+  name: z.string().min(1).max(200).optional(),
+  costAmount: z.number().positive().optional(),
+  costCurrency: z.enum([...CURRENCIES] as [string, ...string[]]).optional(),
+})
+
 // Обновление системных настроек
 export const settingsSchema = z.object({
   timezone: z.string().min(1).max(100).optional(),
