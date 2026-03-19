@@ -1,14 +1,14 @@
-# Откуда подписчик
+# ПодписачЪ
 
-## Бриф проекта «Откуда подписчик»
+## Бриф проекта «ПодписачЪ»
 
-# «Откуда подписчик» — Open-Source Subscriber Attribution Tracker
+# «ПодписачЪ» — Open-Source Subscriber Attribution Tracker
 
 ## 1. Описание проекта
 
 | Параметр | Значение |
 |----------|----------|
-| **Название** | Откуда подписчик (otkuda-podpischik) |
+| **Название** | ПодписачЪ (podpisach) |
 | **Тип** | Open-source self-hosted веб-приложение |
 | **Лицензия** | MIT |
 | **Разработка** | ИИ-ассистент, бюджет не ограничен |
@@ -37,8 +37,8 @@
 Каждый пользователь **сам разворачивает** систему и **подключает своего бота**. Централизованного бота нет. Установка в одну команду:
 
 ```bash
-git clone https://github.com/.../otkuda-podpischik.git
-cd otkuda-podpischik
+git clone https://github.com/.../podpisach.git
+cd podpisach
 docker compose up -d
 # → http://server:3000 → мастер настройки
 ```
@@ -205,7 +205,7 @@ docker compose up -d
 
 ## Архитектура системы
 
-# Архитектура: «Откуда подписчик»
+# Архитектура: «ПодписачЪ»
 
 ## 1. Общая схема
 
@@ -495,7 +495,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://op:op@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:op@postgres:5432/podpisach
       - BOT_INTERNAL_URL=http://bot:3001
     depends_on:
       postgres:
@@ -509,7 +509,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - DATABASE_URL=postgresql://op:op@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:op@postgres:5432/podpisach
     depends_on:
       postgres:
         condition: service_healthy
@@ -520,7 +520,7 @@ services:
     environment:
       - POSTGRES_USER=op
       - POSTGRES_PASSWORD=op
-      - POSTGRES_DB=otkuda_podpischik
+      - POSTGRES_DB=podpisach
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -673,7 +673,7 @@ async function ensureValidToken(account: YandexMetrikaAccount): Promise<string> 
 
 ## Схема базы данных (Prisma)
 
-# Схема базы данных: «Откуда подписчик»
+# Схема базы данных: «ПодписачЪ»
 
 ## 1. ER-диаграмма
 
@@ -1250,12 +1250,12 @@ model Channel {
 
 ## Файловая структура проекта
 
-# 📁 Файловая структура: «Откуда подписчик»
+# 📁 Файловая структура: «ПодписачЪ»
 
 ## Монорепозиторий
 
 ```
-otkuda-podpischik/
+podpisach/
 ├── README.md                        # Описание, установка, скриншоты
 ├── LICENSE                          # MIT
 ├── docker-compose.yml               # Оркестрация 3 контейнеров
@@ -1797,7 +1797,7 @@ graph TD
 
 ```mermaid
 gantt
-    title План реализации «Откуда подписчик»
+    title План реализации «ПодписачЪ»
     dateFormat  YYYY-MM-DD
     axisFormat  %d.%m
 
@@ -2050,61 +2050,61 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: op-app
+    container_name: ps-app
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/podpisach
       - BOT_INTERNAL_URL=http://bot:3001
       - NUXT_PUBLIC_APP_URL=${APP_URL:-http://localhost:3000}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - op-network
+      - ps-network
 
   bot:
     build:
       context: .
       dockerfile: apps/bot/Dockerfile
-    container_name: op-bot
+    container_name: ps-bot
     restart: unless-stopped
     expose:
       - "3001"
     environment:
-      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/podpisach
       - APP_INTERNAL_URL=http://app:3000
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - op-network
+      - ps-network
 
   postgres:
     image: postgres:16-alpine
-    container_name: op-postgres
+    container_name: ps-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: op
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oppassword}
-      POSTGRES_DB: otkuda_podpischik
+      POSTGRES_DB: podpisach
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U op -d otkuda_podpischik"]
+      test: ["CMD-SHELL", "pg_isready -U op -d podpisach"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - op-network
+      - ps-network
 
 volumes:
   pgdata:
     driver: local
 
 networks:
-  op-network:
+  ps-network:
     driver: bridge
 ```
 
@@ -2247,10 +2247,10 @@ exec "$@"
 # scripts/install.sh — установка в одну команду
 set -e
 
-REPO="https://github.com/YOUR_USER/otkuda-podpischik.git"
-DIR="otkuda-podpischik"
+REPO="https://github.com/YOUR_USER/podpisach.git"
+DIR="podpisach"
 
-echo "🔧 Откуда подписчик — установка"
+echo "🔧 ПодписачЪ — установка"
 echo "================================"
 
 # Проверка Docker
@@ -2308,7 +2308,7 @@ echo "  ./scripts/backup.sh        — бэкап БД"
 # scripts/update.sh
 set -e
 
-echo "📦 Обновление Откуда подписчик..."
+echo "📦 Обновление ПодписачЪ..."
 
 git pull origin main
 
@@ -2330,7 +2330,7 @@ BACKUP_DIR="./backups"
 mkdir -p "$BACKUP_DIR"
 
 echo "💾 Бэкап базы данных..."
-docker compose exec -T postgres pg_dump -U op otkuda_podpischik | gzip > "$BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
+docker compose exec -T postgres pg_dump -U op podpisach | gzip > "$BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
 
 echo "✅ Бэкап сохранён: $BACKUP_DIR/backup_$TIMESTAMP.sql.gz"
 
@@ -2459,7 +2459,7 @@ jobs:
 ## 12. Reverse Proxy (опционально)
 
 ```nginx
-# /etc/nginx/sites-available/otkuda-podpischik
+# /etc/nginx/sites-available/podpisach
 server {
     listen 80;
     server_name tracker.example.com;

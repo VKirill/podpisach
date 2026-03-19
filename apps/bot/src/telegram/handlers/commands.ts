@@ -5,7 +5,7 @@ export function setupCommands(bot: Bot): void {
   bot.command('start', async (ctx) => {
     logger.debug({ userId: ctx.from?.id }, '/start command')
     await ctx.reply(
-      '👋 Привет! Я бот системы «Откуда подписчик».\n\n' +
+      '👋 Привет! Я бот системы «ПодписачЪ».\n\n' +
       'Я отслеживаю подписки и отписки в ваших каналах.\n\n' +
       'Используйте /help для справки.',
     )

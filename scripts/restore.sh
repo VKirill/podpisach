@@ -42,7 +42,7 @@ echo "🔄 Восстановление из $BACKUP_FILE..."
 
 # -T обязателен в скриптах (без TTY)
 gunzip -c "$BACKUP_FILE" | docker compose -f "$PROJECT_DIR/docker-compose.yml" exec -T postgres \
-    psql -U op otkuda_podpischik
+    psql -U op podpisach
 
 echo "✅ База данных восстановлена!"
 echo "   Перезапустите приложение: docker compose restart app bot"

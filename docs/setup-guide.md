@@ -28,8 +28,8 @@ newgrp docker
 ### 2. Клонируйте репозиторий и запустите
 
 ```bash
-git clone https://github.com/VKirill/otkuda-podpischik.git
-cd otkuda-podpischik
+git clone https://github.com/VKirill/podpisach.git
+cd podpisach
 ./scripts/install.sh
 ```
 
@@ -97,7 +97,7 @@ window.__OP_CHANNEL = 'ВАШ_CHANNEL_ID';
 Для работы по HTTPS настройте Nginx и Certbot:
 
 ```nginx
-# /etc/nginx/sites-available/otkuda-podpischik
+# /etc/nginx/sites-available/podpisach
 server {
     listen 80;
     server_name tracker.example.com;
@@ -116,7 +116,7 @@ server {
 ```
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/otkuda-podpischik /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/podpisach /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 
 # Получить SSL-сертификат
@@ -130,7 +130,7 @@ sudo certbot --nginx -d tracker.example.com
 ## Обновление
 
 ```bash
-cd otkuda-podpischik
+cd podpisach
 ./scripts/update.sh
 ```
 

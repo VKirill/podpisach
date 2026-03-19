@@ -22,7 +22,7 @@ fi
 
 # Выполнить бэкап: -T обязателен в скриптах (без TTY)
 docker compose -f "$PROJECT_DIR/docker-compose.yml" exec -T postgres \
-    pg_dump -U op otkuda_podpischik | gzip > "$BACKUP_FILE"
+    pg_dump -U op podpisach | gzip > "$BACKUP_FILE"
 
 SIZE=$(du -h "$BACKUP_FILE" | cut -f1)
 echo "✅ Бэкап сохранён: $BACKUP_FILE ($SIZE)"

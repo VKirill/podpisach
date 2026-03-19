@@ -43,7 +43,7 @@ user-invocable: false
 | `react` (without next) | react-app |
 | `vue` (without nuxt) | vue-app |
 | `svelte` (without kit) | svelte-app |
-| `electron` | desktop-app |
+| `electron` | desktps-app |
 | `react-native` / `expo` | mobile-app |
 
 ### По структуре директорий

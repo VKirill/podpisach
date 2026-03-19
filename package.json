@@ -1,5 +1,5 @@
 {
-  "name": "otkuda-podpischik",
+  "name": "podpisach",
   "private": true,
   "packageManager": "pnpm@10.30.1",
   "scripts": {

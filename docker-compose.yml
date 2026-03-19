@@ -5,12 +5,12 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    container_name: op-app
+    container_name: ps-app
     restart: unless-stopped
     ports:
       - "${PORT:-3000}:3000"
     environment:
-      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/podpisach
       - BOT_INTERNAL_URL=http://bot:3001
       - APP_INTERNAL_URL=http://app:3000
       - NUXT_PUBLIC_APP_URL=${APP_URL:-http://localhost:3000}
@@ -19,48 +19,48 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - op-network
+      - ps-network
 
   bot:
     build:
       context: .
       dockerfile: apps/bot/Dockerfile
-    container_name: op-bot
+    container_name: ps-bot
     restart: unless-stopped
     expose:
       - "3001"
     environment:
-      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/podpisach
       - APP_INTERNAL_URL=http://app:3000
       - NODE_ENV=production
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - op-network
+      - ps-network
 
   postgres:
     image: postgres:16-alpine
-    container_name: op-postgres
+    container_name: ps-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: op
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oppassword}
-      POSTGRES_DB: otkuda_podpischik
+      POSTGRES_DB: podpisach
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U op -d otkuda_podpischik"]
+      test: ["CMD-SHELL", "pg_isready -U op -d podpisach"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - op-network
+      - ps-network
 
 volumes:
   pgdata:
     driver: local
 
 networks:
-  op-network:
+  ps-network:
     driver: bridge

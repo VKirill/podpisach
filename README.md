@@ -1,4 +1,4 @@
-# 📊 Откуда подписчик
+# 📊 ПодписачЪ
 
 **Self-hosted система атрибуции подписчиков Telegram и MAX каналов.**
 Определяет, откуда пришёл каждый подписчик — из какой рекламной кампании, с какими UTM-метками, сколько стоил.
@@ -31,8 +31,8 @@
 ## 🚀 Быстрый старт
 
 ```bash
-git clone https://github.com/VKirill/otkuda-podpischik.git
-cd otkuda-podpischik
+git clone https://github.com/VKirill/podpisach.git
+cd podpisach
 ./scripts/install.sh
 ```
 
@@ -136,8 +136,8 @@ VPS от 300–500 ₽/мес (Timeweb, Selectel, Hetzner) достаточно 
 Принимаем pull requests. Перед крупными изменениями — откройте issue для обсуждения.
 
 ```bash
-git clone https://github.com/VKirill/otkuda-podpischik.git
-cd otkuda-podpischik
+git clone https://github.com/VKirill/podpisach.git
+cd podpisach
 pnpm install
 docker compose -f docker-compose.dev.yml up -d postgres
 pnpm dev

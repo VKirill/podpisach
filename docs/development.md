@@ -23,8 +23,8 @@ npm install -g pnpm
 ### 1. Клонируйте репозиторий
 
 ```bash
-git clone https://github.com/VKirill/otkuda-podpischik.git
-cd otkuda-podpischik
+git clone https://github.com/VKirill/podpisach.git
+cd podpisach
 pnpm install
 ```
 
@@ -60,7 +60,7 @@ pnpm --filter bot dev
 ## Структура проекта
 
 ```
-otkuda-podpischik/
+podpisach/
 ├── apps/
 │   ├── web/          # Nuxt 4 — фронтенд + Nitro API
 │   └── bot/          # grammY + MAX-бот

@@ -6,7 +6,7 @@ PROJECT_DIR=$(dirname "$SCRIPT_DIR")
 
 cd "$PROJECT_DIR"
 
-echo "🔧 Откуда подписчик — установка"
+echo "🔧 ПодписачЪ — установка"
 echo "================================"
 
 # Проверка Docker
