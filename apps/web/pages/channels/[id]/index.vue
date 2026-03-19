@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'default' })
+definePageMeta({ middleware: 'auth' })
 
 const route = useRoute()
 const channelId = computed(() => route.params.id as string)
