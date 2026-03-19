@@ -1,21 +1,28 @@
 (function () {
   'use strict';
 
-  var API = window.__OP_API || '';
-  var CHANNEL = window.__OP_CHANNEL || '';
+  // Auto-detect config from <script src="https://server.com/t.js?id=123">
+  var scripts = document.getElementsByTagName('script');
+  var me = scripts[scripts.length - 1];
+  var src = me.getAttribute('src') || '';
+  var srcUrl;
+  try { srcUrl = new URL(src, location.origin); } catch (e) { return; }
 
-  if (!API || !CHANNEL) {
-    console.warn('[PS] Missing __OP_API or __OP_CHANNEL config');
+  var API = srcUrl.origin;
+  var CHANNEL = srcUrl.searchParams.get('id') || '';
+
+  if (!CHANNEL) {
+    console.warn('[PS] Missing ?id= parameter');
     return;
   }
 
   // Дедупликация: не трекать тот же сеанс дважды
-  var STORAGE_KEY = '__ps_tracked_' + CHANNEL;
-  if (sessionStorage.getItem(STORAGE_KEY)) return;
+  var KEY = '__ps_' + CHANNEL;
+  try { if (sessionStorage.getItem(KEY)) return; } catch (e) { /* private mode */ }
 
   var params = new URLSearchParams(location.search);
 
-  // Простой fingerprint без внешних зависимостей
+  // Простой fingerprint
   var fp = [
     navigator.userAgent,
     navigator.language,
@@ -23,7 +30,6 @@
     new Date().getTimezoneOffset(),
   ].join('|');
 
-  // UTM из URL → camelCase (схема ожидает utmSource, не utm_source)
   var payload = {
     channelId: parseInt(CHANNEL, 10),
     utmSource: params.get('utm_source') || undefined,
@@ -38,7 +44,6 @@
     fingerprint: fp,
   };
 
-  // Убрать undefined-поля перед отправкой
   Object.keys(payload).forEach(function (k) {
     if (payload[k] === undefined) delete payload[k];
   });
@@ -53,22 +58,19 @@
       return r.json();
     })
     .then(function (res) {
-      // Сохраняем sessionId для дедупликации
-      sessionStorage.setItem(STORAGE_KEY, res.sessionId || '1');
+      try { sessionStorage.setItem(KEY, res.sessionId || '1'); } catch (e) {}
 
+      // Поддержка обоих атрибутов: data-ps-subscribe (новый) и data-op-subscribe (legacy)
       var btn = document.querySelector('[data-ps-subscribe]') || document.querySelector('[data-op-subscribe]');
 
-      // Подставить invite_url в кнопку подписки
       if (btn && res.invite_url) {
         btn.href = res.invite_url;
       }
 
-      // Отправить цель op_visit в Яндекс Метрику
       if (window.ym && res.ym_counter_id) {
         window.ym(res.ym_counter_id, 'reachGoal', 'ps_visit');
       }
 
-      // Обработчик клика по кнопке подписки
       if (btn && res.ym_counter_id) {
         btn.addEventListener('click', function () {
           if (window.ym) {
@@ -77,7 +79,5 @@
         });
       }
     })
-    .catch(function (err) {
-      console.warn('[PS] Track error:', err);
-    });
+    .catch(function () {});
 })();

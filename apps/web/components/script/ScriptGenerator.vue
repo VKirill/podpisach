@@ -32,15 +32,11 @@ const generatedCode = computed(() => {
   const href = username ? `https://t.me/${username}` : '#'
 
   return [
-    '<!-- ПодписачЪ — трекинг -->',
-    scriptOpen + '>',
-    `window.__OP_API = '${appUrl}';`,
-    `window.__OP_CHANNEL = '${id}';`,
-    scriptClose,
-    scriptOpen + ` src="${appUrl}/tracker.js">` + scriptClose,
+    '<!-- ПодписачЪ — трекинг (1 строка) -->',
+    scriptOpen + ` src="${appUrl}/t.js?id=${id}" defer>` + scriptClose,
     '',
     '<!-- Кнопка подписки (разместите где нужно) -->',
-    `<a href="${href}" data-op-subscribe>`,
+    `<a href="${href}" data-ps-subscribe>`,
     '  Подписаться на канал',
     '</a>',
   ].join('\n')
@@ -112,7 +108,7 @@ onMounted(() => {
           <UTextarea
             :model-value="generatedCode"
             readonly
-            :rows="12"
+            :rows="6"
             class="font-mono text-sm w-full"
           />
         </div>
@@ -132,9 +128,9 @@ onMounted(() => {
         >
           <template #description>
             <ul class="list-disc list-inside space-y-1 text-sm mt-1">
-              <li>Вставьте код перед <code class="font-mono">&lt;/body&gt;</code> на вашем сайте</li>
-              <li>Добавьте атрибут <code class="font-mono">data-op-subscribe</code> к кнопке подписки</li>
-              <li>Скрипт автоматически подставит уникальную invite-ссылку</li>
+              <li>Скопируйте одну строку скрипта на ваш сайт перед <code class="font-mono">&lt;/body&gt;</code></li>
+              <li>Добавьте атрибут <code class="font-mono">data-ps-subscribe</code> к кнопке подписки</li>
+              <li>Скрипт автоматически определит сервер и подставит invite-ссылку</li>
             </ul>
           </template>
         </UAlert>
