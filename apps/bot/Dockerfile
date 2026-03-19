@@ -41,11 +41,21 @@ WORKDIR /app
 # Copy compiled bot
 COPY --from=build /app/apps/bot/dist dist
 
+# Copy shared package (workspace dependency @op/shared)
+COPY --from=build /app/packages/shared packages/shared
+
 # Copy all node_modules (includes Prisma client and all runtime dependencies)
 COPY --from=build /app/node_modules node_modules
 
+# Copy package.json files for workspace resolution
+COPY --from=build /app/package.json package.json
+COPY --from=build /app/pnpm-workspace.yaml pnpm-workspace.yaml
+COPY --from=build /app/apps/bot/package.json apps/bot/package.json
+COPY --from=build /app/packages/shared/package.json packages/shared/package.json
+
 # Copy Prisma schema (bot reads schema at runtime)
 COPY --from=build /app/prisma prisma
+COPY --from=build /app/prisma.config.ts prisma.config.ts
 
 # Copy entrypoint and make it executable
 COPY apps/bot/docker-entrypoint.sh /entrypoint.sh

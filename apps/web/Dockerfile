@@ -44,8 +44,9 @@ COPY --from=build /app/apps/web/.output .output
 # Copy Prisma client — pnpm stores it in .pnpm, copy entire node_modules for compatibility
 COPY --from=build /app/node_modules node_modules
 
-# Copy Prisma schema and migrations (needed for migrate deploy)
+# Copy Prisma schema, migrations, and config (needed for migrate deploy)
 COPY --from=build /app/prisma prisma
+COPY --from=build /app/prisma.config.ts prisma.config.ts
 
 # Copy entrypoint and make it executable
 COPY apps/web/docker-entrypoint.sh /entrypoint.sh

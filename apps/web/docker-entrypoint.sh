@@ -8,11 +8,11 @@ done
 echo "✅ PostgreSQL готов"
 
 echo "📦 Применение миграций..."
-npx prisma migrate deploy
+npx prisma migrate deploy --schema prisma/schema.prisma
 echo "✅ Миграции применены"
 
 echo "🌱 Seed данных..."
-npx prisma db seed 2>/dev/null || true
+npx prisma db seed --schema prisma/schema.prisma 2>/dev/null || true
 
 echo "🚀 Запуск приложения..."
 exec "$@"
