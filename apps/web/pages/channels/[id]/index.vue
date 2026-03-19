@@ -76,11 +76,17 @@ async function deactivateChannel(): Promise<void> {
 }
 
 // Tabs
-const tabPaths = [`/channels/${id}`, `/channels/${id}/subscribers`, `/channels/${id}/links`]
+const tabPaths = [
+  `/channels/${id}`,
+  `/channels/${id}/subscribers`,
+  `/channels/${id}/links`,
+  `/channels/${id}/report`,
+]
 const tabItems = [
   { label: 'Обзор', slot: 'overview' },
   { label: 'Подписчики', slot: 'subscribers' },
   { label: 'Ссылки', slot: 'links' },
+  { label: 'Отчёт', slot: 'report' },
 ]
 
 function handleTabChange(index: number): void {
