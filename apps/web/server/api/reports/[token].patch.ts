@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { updateReportSchema } from '@op/shared'
+import { updateReportSchema } from '@ps/shared'
 
 // Admin: обновить настройки отчёта
 export default defineEventHandler(async (event) => {

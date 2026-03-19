@@ -1,4 +1,4 @@
-import { encrypt } from '@op/shared'
+import { encrypt } from '@ps/shared'
 
 interface YaTokenResponse {
   access_token: string
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig()
   const redirectUri = `${config.public.appUrl}/api/integrations/ym/callback`
-  const { decrypt } = await import('@op/shared')
+  const { decrypt } = await import('@ps/shared')
 
   // Обмен code на токены
   let tokenData: YaTokenResponse

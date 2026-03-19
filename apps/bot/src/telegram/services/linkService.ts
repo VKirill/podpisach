@@ -1,6 +1,6 @@
 import { GrammyError } from 'grammy'
 import type { Bot } from 'grammy'
-import { MAX_LINKS_PER_MINUTE } from '@op/shared'
+import { MAX_LINKS_PER_MINUTE } from '@ps/shared'
 import { prisma } from '../../utils/prisma.js'
 import { logger } from '../../utils/logger.js'
 import { withRetry } from '../../utils/retry.js'

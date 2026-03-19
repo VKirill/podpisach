@@ -1,7 +1,7 @@
 import type { AttributionResult } from './correlator.js'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
-import { CONFIDENCE, DEFAULT_CORRELATION_WINDOW_SEC } from '@op/shared'
+import { CONFIDENCE, DEFAULT_CORRELATION_WINDOW_SEC } from '@ps/shared'
 
 /**
  * Probabilistic attribution for MAX subscribers.

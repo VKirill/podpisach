@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import type { H3Event } from 'h3'
 
-const COOKIE_NAME = 'op-session'
+const COOKIE_NAME = 'ps-session'
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 дней
 
 export async function createSession(event: H3Event): Promise<void> {

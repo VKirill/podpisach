@@ -4,7 +4,7 @@ import { logger } from '../utils/logger.js'
 import { createInviteLink, revokeInviteLink, type ManualLinkData } from '../telegram/services/linkService.js'
 import { createTelegramBot, startBot, stopBot, getBot } from '../telegram/bot.js'
 import { startMaxPolling, isMaxPollingRunning } from '../max/poller.js'
-import { decrypt } from '@op/shared'
+import { decrypt } from '@ps/shared'
 
 let server: http.Server | null = null
 let isStarting = false

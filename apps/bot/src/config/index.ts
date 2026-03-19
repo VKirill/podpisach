@@ -1,4 +1,4 @@
-import { decrypt } from '@op/shared'
+import { decrypt } from '@ps/shared'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
 

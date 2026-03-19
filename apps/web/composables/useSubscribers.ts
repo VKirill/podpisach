@@ -1,4 +1,4 @@
-import type { Platform } from '@op/shared'
+import type { Platform } from '@ps/shared'
 
 export interface SubscriberVisit {
   utmSource: string | null

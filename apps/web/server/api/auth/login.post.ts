@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { loginSchema } from '@op/shared'
+import { loginSchema } from '@ps/shared'
 
 export default defineEventHandler(async (event) => {
   const body = await validateBody(event, loginSchema)

@@ -1,4 +1,4 @@
-import { ymGoalPatchSchema } from '@op/shared'
+import { ymGoalPatchSchema } from '@ps/shared'
 import { ensureValidToken, ymApiFetch } from '~/server/utils/ymClient'
 
 export default defineEventHandler(async (event) => {

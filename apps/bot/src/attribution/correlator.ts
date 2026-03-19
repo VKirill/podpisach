@@ -1,4 +1,4 @@
-import type { Platform } from '@op/shared'
+import type { Platform } from '@ps/shared'
 import { telegramMatch } from './telegramMatcher.js'
 import { maxMatch } from './maxMatcher.js'
 import { logger } from '../utils/logger.js'

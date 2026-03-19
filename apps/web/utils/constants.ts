@@ -1,4 +1,4 @@
-// Re-export из @op/shared
+// Re-export из @ps/shared
 export {
   PLATFORMS,
   DEFAULT_LINK_TTL_HOURS,
@@ -11,7 +11,7 @@ export {
   CONFIDENCE,
   MAX_UTM_LENGTH,
   MAX_URL_LENGTH,
-} from '@op/shared/constants'
+} from '@ps/shared/constants'
 
 // UI-специфичные константы навигации
 export const NAV_ITEMS = [

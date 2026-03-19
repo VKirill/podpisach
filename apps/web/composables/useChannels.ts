@@ -1,4 +1,4 @@
-import type { Platform } from '@op/shared'
+import type { Platform } from '@ps/shared'
 
 interface ChannelBot {
   id: number

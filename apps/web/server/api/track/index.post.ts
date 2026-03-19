@@ -1,4 +1,4 @@
-import { trackPayloadSchema } from '@op/shared/validation'
+import { trackPayloadSchema } from '@ps/shared/validation'
 import crypto from 'node:crypto'
 
 const CORS_HEADERS = {

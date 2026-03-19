@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GOAL_DEFAULT_NAMES } from '@op/shared/constants'
+import { GOAL_DEFAULT_NAMES } from '@ps/shared/constants'
 
 interface YmStatus {
   configured: boolean

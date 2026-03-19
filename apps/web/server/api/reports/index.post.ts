@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { createReportSchema } from '@op/shared'
+import { createReportSchema } from '@ps/shared'
 
 // Admin: создать публичный отчёт
 export default defineEventHandler(async (event) => {

@@ -1,5 +1,5 @@
-import { ymCredentialsSchema } from '@op/shared'
-import { encrypt } from '@op/shared'
+import { ymCredentialsSchema } from '@ps/shared'
+import { encrypt } from '@ps/shared'
 
 export default defineEventHandler(async (event) => {
   const body = await validateBody(event, ymCredentialsSchema)

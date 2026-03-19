@@ -1,5 +1,5 @@
 # === DEV ===
-FROM node:20-alpine AS dev
+FROM node:22-alpine AS dev
 
 RUN corepack enable && corepack prepare pnpm@10.30.1 --activate
 
@@ -31,7 +31,7 @@ FROM dev AS build
 RUN pnpm turbo build --filter=bot
 
 # === PRODUCTION ===
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # postgresql-client provides pg_isready for entrypoint health checks
 RUN apk add --no-cache postgresql-client
@@ -41,7 +41,7 @@ WORKDIR /app
 # Copy compiled bot
 COPY --from=build /app/apps/bot/dist dist
 
-# Copy shared package (workspace dependency @op/shared)
+# Copy shared package (workspace dependency @ps/shared)
 COPY --from=build /app/packages/shared packages/shared
 
 # Copy all node_modules (includes Prisma client and all runtime dependencies)

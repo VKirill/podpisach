@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from '@op/shared'
+import { encrypt, decrypt } from '@ps/shared'
 import type { YandexMetrikaAccount } from '@prisma/client'
 import { prisma } from './prisma'
 

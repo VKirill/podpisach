@@ -2,7 +2,7 @@ import cron from 'node-cron'
 import type { ScheduledTask } from 'node-cron'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
-import { GOAL_KEYS } from '@op/shared'
+import { GOAL_KEYS } from '@ps/shared'
 import { retryGaConversion } from '../integrations/googleAnalytics.js'
 
 type GoalKey = typeof GOAL_KEYS[number]

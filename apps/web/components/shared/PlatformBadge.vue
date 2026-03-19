@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Platform } from '@op/shared'
+import type { Platform } from '@ps/shared'
 
 interface Props {
   platform: Platform

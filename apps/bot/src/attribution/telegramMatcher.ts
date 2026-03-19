@@ -1,7 +1,7 @@
 import type { AttributionResult } from './correlator.js'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
-import { CONFIDENCE } from '@op/shared'
+import { CONFIDENCE } from '@ps/shared'
 
 /**
  * Exact attribution for Telegram subscribers.

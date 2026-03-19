@@ -16,14 +16,16 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: npx prisma generate
+        run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
 
       - name: Typecheck
         run: pnpm turbo typecheck
@@ -34,9 +36,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: op
+          POSTGRES_USER: ps
           POSTGRES_PASSWORD: test
-          POSTGRES_DB: op_test
+          POSTGRES_DB: ps_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -52,21 +54,23 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: npx prisma generate
+        run: pnpm exec prisma generate
+        env:
+          DATABASE_URL: postgresql://ps:test@localhost:5432/ps_test
 
       - name: Push schema to test DB
-        run: npx prisma db push
+        run: pnpm exec prisma db push
         env:
-          DATABASE_URL: postgresql://op:test@localhost:5432/op_test
+          DATABASE_URL: postgresql://ps:test@localhost:5432/ps_test
 
       - name: Run tests
         run: pnpm turbo test
         env:
-          DATABASE_URL: postgresql://op:test@localhost:5432/op_test
+          DATABASE_URL: postgresql://ps:test@localhost:5432/ps_test

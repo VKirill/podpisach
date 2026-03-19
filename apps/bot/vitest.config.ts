@@ -7,7 +7,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
-      '@op/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@ps/shared': resolve(__dirname, '../../packages/shared/src/index.ts'),
     },
   },
   test: {

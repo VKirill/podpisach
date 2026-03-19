@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { decrypt } from '@op/shared'
+import { decrypt } from '@ps/shared'
 
 const setupChannelSchema = z.object({
   channelId: z.string().min(1).max(200),

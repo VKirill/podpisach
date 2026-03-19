@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { StatsOverview } from '@op/shared'
+import type { StatsOverview } from '@ps/shared'
 
 definePageMeta({ middleware: 'auth' })
 

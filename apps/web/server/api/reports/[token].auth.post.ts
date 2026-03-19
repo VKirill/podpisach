@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { reportPasswordSchema } from '@op/shared'
+import { reportPasswordSchema } from '@ps/shared'
 
 // PUBLIC: проверка пароля публичного отчёта + выдача cookie-сессии
 // checkRateLimit — auto-imported from server/utils/rateLimiter by Nitro

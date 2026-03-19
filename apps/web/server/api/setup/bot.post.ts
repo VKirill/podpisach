@@ -1,4 +1,4 @@
-import { setupBotSchema, encrypt } from '@op/shared'
+import { setupBotSchema, encrypt } from '@ps/shared'
 
 interface TelegramGetMeResult {
   ok: boolean

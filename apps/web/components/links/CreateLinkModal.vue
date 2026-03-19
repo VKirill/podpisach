@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CURRENCIES } from '@op/shared'
+import { CURRENCIES } from '@ps/shared'
 
 interface Props {
   channelId: number

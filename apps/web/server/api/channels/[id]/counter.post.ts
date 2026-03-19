@@ -1,4 +1,4 @@
-import { ymCounterBindSchema, GOAL_DEFAULT_NAMES, GOAL_KEYS } from '@op/shared'
+import { ymCounterBindSchema, GOAL_DEFAULT_NAMES, GOAL_KEYS } from '@ps/shared'
 import { ensureValidToken, ymApiFetch } from '~/server/utils/ymClient'
 
 type GoalKey = typeof GOAL_KEYS[number]

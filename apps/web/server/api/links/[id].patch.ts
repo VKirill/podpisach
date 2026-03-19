@@ -1,4 +1,4 @@
-import { updateLinkSchema } from '@op/shared/validation'
+import { updateLinkSchema } from '@ps/shared/validation'
 
 export default defineEventHandler(async (event) => {
   const linkId = Number(getRouterParam(event, 'id'))

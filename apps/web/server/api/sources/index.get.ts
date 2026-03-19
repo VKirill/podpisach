@@ -1,4 +1,9 @@
 export default defineEventHandler(async (event) => {
+  const isAuth = await verifySession(event)
+  if (!isAuth) {
+    throw createError({ statusCode: 401, message: 'Unauthorized' })
+  }
+
   const query = getQuery(event)
   const period = String(query.period ?? '30d')
   const channelId = query.channelId ? Number(query.channelId) : null
@@ -10,6 +15,8 @@ export default defineEventHandler(async (event) => {
   if (channelId !== null && isNaN(channelId)) {
     throw createError({ statusCode: 400, message: 'Invalid channelId' })
   }
+
+  try {
 
   type VisitRow = {
     source: string | null
@@ -159,4 +166,9 @@ export default defineEventHandler(async (event) => {
   })
 
   return { sources }
+
+  } catch (err) {
+    console.error('[sources] Query failed:', err)
+    return { sources: [] }
+  }
 })

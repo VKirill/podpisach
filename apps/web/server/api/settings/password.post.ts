@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import { changePasswordSchema } from '@op/shared'
+import { changePasswordSchema } from '@ps/shared'
 
 export default defineEventHandler(async (event) => {
   const settings = await prisma.settings.findFirst({ where: { id: 1 } })

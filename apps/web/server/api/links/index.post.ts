@@ -1,4 +1,4 @@
-import { createLinkSchema } from '@op/shared/validation'
+import { createLinkSchema } from '@ps/shared/validation'
 
 export default defineEventHandler(async (event) => {
   const body = await validateBody(event, createLinkSchema)

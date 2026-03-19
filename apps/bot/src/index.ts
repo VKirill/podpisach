@@ -6,7 +6,7 @@ import { startStatsSyncJob } from './jobs/statsSync.js'
 import { startConversionRetryJob } from './jobs/conversionRetry.js'
 import { prisma } from './utils/prisma.js'
 import { logger } from './utils/logger.js'
-import { decrypt } from '@op/shared'
+import { decrypt } from '@ps/shared'
 import { startInternalApi, stopInternalApi } from './api/internal.js'
 import { startMaxPolling, stopMaxPolling } from './max/poller.js'
 

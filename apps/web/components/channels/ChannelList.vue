@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Channel } from '~/composables/useChannels'
-import type { Platform } from '@op/shared'
+import type { Platform } from '@ps/shared'
 
 interface Props {
   channels: Channel[]

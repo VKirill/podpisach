@@ -1,5 +1,5 @@
 # === DEV ===
-FROM node:20-alpine AS dev
+FROM node:22-alpine AS dev
 
 RUN corepack enable && corepack prepare pnpm@10.30.1 --activate
 
@@ -31,7 +31,7 @@ FROM dev AS build
 RUN pnpm turbo build --filter=web
 
 # === PRODUCTION ===
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # postgresql-client for health checks
 RUN apk add --no-cache postgresql-client
