@@ -3,6 +3,7 @@ import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
 import { createInviteLink, revokeInviteLink, type ManualLinkData } from '../telegram/services/linkService.js'
 import { createTelegramBot, startBot, stopBot, getBot } from '../telegram/bot.js'
+import { startMaxPolling, isMaxPollingRunning } from '../max/poller.js'
 import { decrypt } from '@op/shared'
 
 let server: http.Server | null = null
@@ -121,7 +122,7 @@ async function handleBotStatus(res: http.ServerResponse): Promise<void> {
     JSON.stringify({
       status: bot ? 'running' : 'waiting',
       telegramConnected: !!bot,
-      maxConnected: false, // MAX реализуется позже
+      maxConnected: isMaxPollingRunning(),
       channels,
     }),
   )
@@ -159,6 +160,21 @@ async function handleBotStart(
   if (!botRecord) {
     res.writeHead(404)
     res.end(JSON.stringify({ error: 'Bot not found' }))
+    return
+  }
+
+  if (botRecord.platform === 'max') {
+    if (isMaxPollingRunning()) {
+      res.writeHead(409)
+      res.end(JSON.stringify({ error: 'MAX bot is already running' }))
+      return
+    }
+    const token = decrypt(botRecord.token, secret)
+    startMaxPolling(token).catch((err: unknown) => {
+      logger.error({ err }, 'MAX polling fatal error')
+    })
+    res.writeHead(200)
+    res.end(JSON.stringify({ success: true }))
     return
   }
 

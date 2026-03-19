@@ -8,6 +8,7 @@ import { prisma } from './utils/prisma.js'
 import { logger } from './utils/logger.js'
 import { decrypt } from '@op/shared'
 import { startInternalApi, stopInternalApi } from './api/internal.js'
+import { startMaxPolling, stopMaxPolling } from './max/poller.js'
 
 const POLL_INTERVAL_MS = 5_000
 
@@ -36,6 +37,26 @@ async function pollForToken(internalApiSecret: string): Promise<string> {
   throw new Error('Shutdown before token was configured')
 }
 
+async function pollForMaxToken(internalApiSecret: string): Promise<string> {
+  logger.info('⏳ No MAX token configured. Polling DB every 5s...')
+
+  while (!isShuttingDown) {
+    const bot = await prisma.bot.findFirst({
+      where: { platform: 'max', isActive: true },
+    })
+
+    if (bot) {
+      const token = decrypt(bot.token, internalApiSecret)
+      logger.info('🔑 MAX bot token found in DB, starting MAX polling...')
+      return token
+    }
+
+    await new Promise(resolve => setTimeout(resolve, POLL_INTERVAL_MS))
+  }
+
+  throw new Error('Shutdown before MAX token was configured')
+}
+
 async function main(): Promise<void> {
   logger.info('🤖 Bot process starting...')
 
@@ -56,6 +77,25 @@ async function main(): Promise<void> {
   const bot = createTelegramBot(token)
   await startBot(bot)
 
+  // Start MAX polling in background (non-blocking)
+  if (config.maxToken) {
+    startMaxPolling(config.maxToken).catch((err: unknown) => {
+      logger.error({ err }, 'MAX polling fatal error')
+    })
+  } else {
+    pollForMaxToken(config.internalApiSecret)
+      .then(maxToken => {
+        if (!isShuttingDown) {
+          startMaxPolling(maxToken).catch((err: unknown) => {
+            logger.error({ err }, 'MAX polling fatal error')
+          })
+        }
+      })
+      .catch((err: unknown) => {
+        if (!isShuttingDown) logger.error({ err }, 'Failed to get MAX token')
+      })
+  }
+
   linkCleanupTask = startLinkCleanupJob()
   statsSyncTask = startStatsSyncJob()
   conversionRetryTask = startConversionRetryJob()
@@ -71,6 +111,7 @@ const shutdown = async (): Promise<void> => {
   statsSyncTask?.stop()
   conversionRetryTask?.stop()
 
+  stopMaxPolling()
   await stopInternalApi()
   await stopBot()
   await prisma.$disconnect()
