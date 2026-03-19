@@ -1,0 +1,34 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: dev
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - ./prisma:/app/prisma
+      - /app/node_modules
+    command: pnpm --filter web dev
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "${PORT:-3000}:3000"
+
+  bot:
+    build:
+      context: .
+      dockerfile: apps/bot/Dockerfile
+      target: dev
+    volumes:
+      - ./apps/bot:/app/apps/bot
+      - ./packages:/app/packages
+      - ./prisma:/app/prisma
+      - /app/node_modules
+    command: pnpm --filter bot dev
+    environment:
+      - NODE_ENV=development
+
+  postgres:
+    ports:
+      - "5432:5432"
