@@ -22,8 +22,9 @@ const selectedChannel = computed(() =>
   activeChannels.value.find((c) => c.id === modelValue.value) ?? null,
 )
 
-// КРИТИЧНО: '</' + 'script>' — не писать </script> литерально, это сломает SFC парсер
+// КРИТИЧНО: '</' + 'script>' и '<' + 'script' — не писать теги script литерально, это сломает SFC парсер
 const scriptClose = '</' + 'script>'
+const scriptOpen = '<' + 'script'
 
 const generatedCode = computed(() => {
   if (!selectedChannel.value) return ''
@@ -32,11 +33,11 @@ const generatedCode = computed(() => {
 
   return [
     '<!-- Откуда подписчик — трекинг -->',
-    '<script>',
+    scriptOpen + '>',
     `window.__OP_API = '${appUrl}';`,
     `window.__OP_CHANNEL = '${id}';`,
     scriptClose,
-    `<script src="${appUrl}/tracker.js">${scriptClose}`,
+    scriptOpen + ` src="${appUrl}/tracker.js">` + scriptClose,
     '',
     '<!-- Кнопка подписки (разместите где нужно) -->',
     `<a href="${href}" data-op-subscribe>`,
