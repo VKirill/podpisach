@@ -1,0 +1,9 @@
+node_modules/
+.output/
+dist/
+.nuxt/
+.env
+*.log
+.turbo/
+.prisma/
+backups/
