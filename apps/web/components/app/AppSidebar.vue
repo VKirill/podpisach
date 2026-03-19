@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { NAV_ITEMS, APP_VERSION } from '~/utils/constants'
+
+const { logout } = useAuth()
 </script>
 
 <template>
@@ -23,5 +25,18 @@ import { NAV_ITEMS, APP_VERSION } from '~/utils/constants'
         class="w-full"
       />
     </nav>
+
+    <!-- Выход -->
+    <div class="px-2 py-3 border-t border-gray-200 dark:border-gray-800">
+      <UButton
+        variant="ghost"
+        color="neutral"
+        icon="i-heroicons-arrow-right-on-rectangle"
+        class="w-full justify-start"
+        @click="logout"
+      >
+        Выйти
+      </UButton>
+    </div>
   </div>
 </template>
