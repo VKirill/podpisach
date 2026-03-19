@@ -78,5 +78,5 @@ export interface StatsOverview {
   newToday: number
   leftToday: number
   channels: number
-  topSources: Array<{ source: string; count: number }>
+  topSources: Array<{ source: string; medium: string; count: number }>
 }
