@@ -22,7 +22,7 @@ export async function sendGaConversion(subscriberId: number, eventName: string):
 
   if (!integration?.isActive) return
 
-  const { measurementId, apiSecret } = integration.config as GaConfig
+  const { measurementId, apiSecret } = integration.config as unknown as GaConfig
 
   const subscriber = await prisma.subscriber.findUnique({
     where: { id: subscriberId },
