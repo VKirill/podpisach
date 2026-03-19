@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
   // @nuxt/ui автоматически подключает Tailwind v4 — НЕ добавлять @nuxtjs/tailwindcss
   build: {
-    transpile: ['@op/shared'],
+    transpile: ['@op/shared', 'jsonwebtoken'],
   },
 
   // Автоимпорт composables
