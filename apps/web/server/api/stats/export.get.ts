@@ -8,10 +8,13 @@ const querySchema = z.object({
 function csvEscape(value: string | null | undefined): string {
   if (value === null || value === undefined) return ''
   const str = String(value)
-  if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-    return '"' + str.replace(/"/g, '""') + '"'
+  // FIX: formula injection protection — prefix dangerous leading chars with single quote
+  const FORMULA_STARTERS = ['=', '+', '-', '@', '\t', '\r']
+  const safe = FORMULA_STARTERS.some(c => str.startsWith(c)) ? "'" + str : str
+  if (safe.includes(',') || safe.includes('"') || safe.includes('\n') || safe.includes('\r')) {
+    return '"' + safe.replace(/"/g, '""') + '"'
   }
-  return str
+  return safe
 }
 
 function csvRow(fields: (string | null | undefined)[]): string {
@@ -53,6 +56,7 @@ export default defineEventHandler(async (event) => {
       },
     },
     orderBy: { subscribedAt: 'desc' },
+    take: 50_000,
   })
 
   const date = new Date().toISOString().slice(0, 10)

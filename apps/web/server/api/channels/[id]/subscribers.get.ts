@@ -1,16 +1,26 @@
+import { z } from 'zod'
+
+const querySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  status: z.enum(['all', 'active', 'left', 'kicked', 'banned']).default('all'),
+  search: z.string().default(''),
+  source: z.string().default(''),
+})
+
 export default defineEventHandler(async (event) => {
   const channelId = Number(getRouterParam(event, 'id'))
   if (!channelId || isNaN(channelId)) {
     throw createError({ statusCode: 400, message: 'Invalid channel ID' })
   }
 
-  const query = getQuery(event)
-  const page = Math.max(1, Number(query.page) || 1)
-  const limit = Math.min(200, Math.max(1, Number(query.limit) || 50))
+  const parsed = querySchema.safeParse(getQuery(event))
+  if (!parsed.success) {
+    throw createError({ statusCode: 400, message: 'Invalid query parameters' })
+  }
+
+  const { page, limit, status, search, source } = parsed.data
   const skip = (page - 1) * limit
-  const status = String(query.status || 'all')
-  const search = query.search ? String(query.search).trim() : undefined
-  const source = query.source ? String(query.source).trim() : undefined
 
   const channel = await prisma.channel.findUnique({
     where: { id: channelId },
