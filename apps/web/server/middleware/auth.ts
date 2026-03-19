@@ -7,6 +7,7 @@ const PUBLIC_PREFIXES = [
   '/api/report/',
   '/api/reports/',
   '/api/internal/',
+  '/api/integrations/ym/callback',
 ]
 
 export default defineEventHandler(async (event) => {

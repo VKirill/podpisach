@@ -1,5 +1,6 @@
 import { encrypt, decrypt } from '@op/shared'
 import type { YandexMetrikaAccount } from '@prisma/client'
+import { prisma } from './prisma'
 
 const YM_API_BASE = 'https://api-metrika.yandex.net/management/v1'
 const YA_OAUTH_TOKEN_URL = 'https://oauth.yandex.ru/token'
@@ -26,8 +27,8 @@ export async function ensureValidToken(account: YandexMetrikaAccount): Promise<s
     throw createError({ statusCode: 503, message: 'Settings not initialized' })
   }
 
-  // Токен действителен — вернуть сразу
-  if (account.accessToken && account.tokenExpiresAt && account.tokenExpiresAt > new Date()) {
+  // Токен действителен — вернуть сразу (с буфером 60 сек для race condition)
+  if (account.accessToken && account.tokenExpiresAt && account.tokenExpiresAt > new Date(Date.now() + 60_000)) {
     return decrypt(account.accessToken, settings.internalApiSecret)
   }
 
@@ -79,13 +80,22 @@ export async function ymApiFetch<T>(
   options: YmFetchOptions = {},
 ): Promise<T> {
   const { headers, ...rest } = options
-  return $fetch<T>(`${YM_API_BASE}/${path}`, {
-    ...rest,
-    headers: {
-      Authorization: `OAuth ${token}`,
-      ...headers,
-    },
-  })
+  try {
+    return await $fetch<T>(`${YM_API_BASE}/${path}`, {
+      ...rest,
+      headers: {
+        Authorization: `OAuth ${token}`,
+        ...headers,
+      },
+    })
+  } catch {
+    throw createError({ statusCode: 502, message: `Yandex Metrika API error: ${path}` })
+  }
+}
+
+/** Санитизация значения для CSV: убирает запятые, кавычки и переносы строк. */
+function sanitizeCsvValue(value: string): string {
+  return value.replace(/[,"\r\n]/g, '')
 }
 
 /**
@@ -99,14 +109,23 @@ export async function sendOfflineConversion(
   datetime: string,
   token: string,
 ): Promise<void> {
-  const csv = `Yclid,Target,DateTime\n${yclid},${goalCondition},${datetime}`
+  const csvRow = [
+    sanitizeCsvValue(yclid),
+    sanitizeCsvValue(goalCondition),
+    sanitizeCsvValue(datetime),
+  ].join(',')
+  const csv = `Yclid,Target,DateTime\n${csvRow}`
 
-  await $fetch(`${YM_API_BASE}/counter/${counterId}/offline_conversions/upload`, {
-    method: 'POST',
-    headers: {
-      Authorization: `OAuth ${token}`,
-      'Content-Type': 'text/csv',
-    },
-    body: csv,
-  })
+  try {
+    await $fetch(`${YM_API_BASE}/counter/${counterId}/offline_conversions/upload`, {
+      method: 'POST',
+      headers: {
+        Authorization: `OAuth ${token}`,
+        'Content-Type': 'text/csv',
+      },
+      body: csv,
+    })
+  } catch {
+    throw createError({ statusCode: 502, message: 'Failed to send offline conversion to Yandex Metrika' })
+  }
 }
