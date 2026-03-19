@@ -3,6 +3,7 @@ import type { ScheduledTask } from 'node-cron'
 import { prisma } from '../utils/prisma.js'
 import { logger } from '../utils/logger.js'
 import { GOAL_KEYS } from '@op/shared'
+import { retryGaConversion } from '../integrations/googleAnalytics.js'
 
 type GoalKey = typeof GOAL_KEYS[number]
 
@@ -16,7 +17,7 @@ interface ConversionWithRelations {
   retryCount: number
   subscriberId: number
   integration: { type: string }
-  visit: { yclid: string | null } | null
+  visit: { yclid: string | null; sessionId: string | null; utmSource: string | null; utmMedium: string | null; utmCampaign: string | null } | null
   subscriber: { channelId: number }
 }
 
@@ -78,7 +79,7 @@ export function startConversionRetryJob(): ScheduledTask {
           retryCount: true,
           subscriberId: true,
           integration: { select: { type: true } },
-          visit: { select: { yclid: true } },
+          visit: { select: { yclid: true, sessionId: true, utmSource: true, utmMedium: true, utmCampaign: true } },
           subscriber: { select: { channelId: true } },
         },
         take: BATCH_LIMIT,

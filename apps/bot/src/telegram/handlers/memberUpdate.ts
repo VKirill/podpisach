@@ -5,6 +5,7 @@ import { prisma } from '../../utils/prisma.js'
 import { logger } from '../../utils/logger.js'
 import { revokeInviteLink } from '../services/linkService.js'
 import { correlate } from '../../attribution/correlator.js'
+import { sendGaConversion } from '../../integrations/googleAnalytics.js'
 
 type ChannelRef = { id: number }
 type LeaveStatus = 'left' | 'kicked' | 'banned'
@@ -176,6 +177,10 @@ async function handleJoin(
     },
     '✅ New subscriber joined',
   )
+
+  sendGaConversion(subscriber.id, 'subscribe').catch((err) => {
+    logger.error({ err, subscriberId: subscriber.id }, 'GA conversion error on join')
+  })
 }
 
 async function handleLeave(
@@ -220,6 +225,10 @@ async function handleLeave(
     { userId: user.id, channelId: channel.id, status },
     '👋 Subscriber left',
   )
+
+  sendGaConversion(subscriber.id, 'unsubscribe').catch((err) => {
+    logger.error({ err, subscriberId: subscriber.id }, 'GA conversion error on leave')
+  })
 }
 
 function mapLeaveStatus(newStatus: LeaveStatus): 'left' | 'kicked' | 'banned' {
