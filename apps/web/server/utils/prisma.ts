@@ -5,13 +5,17 @@ declare global {
   var __prisma: PrismaClient | undefined
 }
 
+const prismaOptions = {
+  datasourceUrl: process.env.DATABASE_URL,
+}
+
 let prisma: PrismaClient
 
 if (process.env.NODE_ENV === 'production') {
-  prisma = new PrismaClient()
+  prisma = new PrismaClient(prismaOptions)
 } else {
   if (!global.__prisma) {
-    global.__prisma = new PrismaClient()
+    global.__prisma = new PrismaClient(prismaOptions)
   }
   prisma = global.__prisma
 }
