@@ -63,6 +63,30 @@ async function retryYmConversion(
   }
 }
 
+async function retryGaIntegration(conversion: ConversionWithRelations): Promise<void> {
+  if (!conversion.visit?.sessionId) return
+
+  const integration = await prisma.integration.findUnique({
+    where: { type: 'google_analytics' },
+    select: { isActive: true, config: true },
+  })
+
+  if (!integration?.isActive) return
+
+  const { measurementId, apiSecret } = integration.config as { measurementId: string; apiSecret: string }
+
+  await retryGaConversion(
+    conversion.subscriberId,
+    conversion.visit.sessionId,
+    conversion.subscriber.channelId,
+    conversion.visit.utmSource,
+    conversion.visit.utmMedium,
+    conversion.visit.utmCampaign,
+    measurementId,
+    apiSecret,
+  )
+}
+
 export function startConversionRetryJob(): ScheduledTask {
   const task = cron.schedule('*/10 * * * *', async () => {
     try {
@@ -99,8 +123,9 @@ export function startConversionRetryJob(): ScheduledTask {
         try {
           if (conversion.integration.type === 'yandex_metrika') {
             await retryYmConversion(conversion, settings.internalApiSecret)
+          } else if (conversion.integration.type === 'google_analytics') {
+            await retryGaIntegration(conversion)
           }
-          // GA и другие интеграции — будут добавлены в INT-2
 
           await prisma.conversion.update({
             where: { id: conversion.id },
