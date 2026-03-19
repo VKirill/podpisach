@@ -67,5 +67,5 @@ export default defineEventHandler(async (event) => {
     // Игнорируем: bot-процесс может быть ещё не готов
   })
 
-  return { success: true, botId: bot.id }
+  return { success: true, botId: bot.id, botUsername: botUsername ?? null }
 })

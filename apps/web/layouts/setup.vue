@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { currentStep, totalSteps } = useSetup()
+const progressWidth = computed(() => `${(currentStep.value / totalSteps) * 100}%`)
 </script>
 
 <template>
@@ -16,10 +18,13 @@
     <div class="w-full max-w-lg mb-8">
       <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-2">
         <span>Настройка</span>
-        <span>Мастер установки</span>
+        <span>Шаг {{ currentStep }} из {{ totalSteps }}</span>
       </div>
       <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-1.5">
-        <div class="bg-primary-600 h-1.5 rounded-full w-1/4 transition-all" />
+        <div
+          class="bg-primary-600 h-1.5 rounded-full transition-all duration-300"
+          :style="{ width: progressWidth }"
+        />
       </div>
     </div>
 

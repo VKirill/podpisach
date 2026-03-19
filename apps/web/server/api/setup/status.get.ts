@@ -6,15 +6,22 @@ export default defineEventHandler(async () => {
     throw createError({ statusCode: 503, message: 'Settings not initialized' })
   }
 
-  const [telegramBotCount, channelCount] = await Promise.all([
-    prisma.bot.count({ where: { platform: 'telegram' } }),
-    prisma.channel.count(),
+  const [telegramBot, channel] = await Promise.all([
+    prisma.bot.findFirst({
+      where: { platform: 'telegram' },
+      select: { botUsername: true },
+    }),
+    prisma.channel.findFirst({
+      select: { title: true },
+    }),
   ])
 
   return {
     setupCompleted: settings.setupCompleted,
     hasPassword: !!settings.adminPasswordHash,
-    hasTelegramBot: telegramBotCount > 0,
-    hasChannel: channelCount > 0,
+    hasTelegramBot: telegramBot !== null,
+    hasChannel: channel !== null,
+    botUsername: telegramBot?.botUsername ?? null,
+    channelTitle: channel?.title ?? null,
   }
 })
