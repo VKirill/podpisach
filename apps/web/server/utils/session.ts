@@ -12,7 +12,7 @@ export async function createSession(event: H3Event): Promise<void> {
   const token = jwt.sign({ admin: true }, settings.sessionSecret, { expiresIn: '7d' })
   setCookie(event, COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: (process.env.NUXT_PUBLIC_APP_URL || '').startsWith('https'),
     sameSite: 'lax',
     maxAge: COOKIE_MAX_AGE,
     path: '/',
