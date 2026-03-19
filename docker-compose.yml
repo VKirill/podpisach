@@ -1,0 +1,66 @@
+# ⚠️ НИКОГДА не используйте docker compose down -v — это удалит все данные!
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: op-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - BOT_INTERNAL_URL=http://bot:3001
+      - APP_INTERNAL_URL=http://app:3000
+      - NUXT_PUBLIC_APP_URL=${APP_URL:-http://localhost:3000}
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - op-network
+
+  bot:
+    build:
+      context: .
+      dockerfile: apps/bot/Dockerfile
+    container_name: op-bot
+    restart: unless-stopped
+    expose:
+      - "3001"
+    environment:
+      - DATABASE_URL=postgresql://op:${POSTGRES_PASSWORD:-oppassword}@postgres:5432/otkuda_podpischik
+      - APP_INTERNAL_URL=http://app:3000
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - op-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: op-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: op
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oppassword}
+      POSTGRES_DB: otkuda_podpischik
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U op -d otkuda_podpischik"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - op-network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  op-network:
+    driver: bridge
