@@ -33,7 +33,7 @@ RUN pnpm turbo build --filter=web
 # === PRODUCTION ===
 FROM node:20-alpine AS production
 
-# postgresql-client provides pg_isready for entrypoint health checks
+# postgresql-client for health checks
 RUN apk add --no-cache postgresql-client
 
 WORKDIR /app
