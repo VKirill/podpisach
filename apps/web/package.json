@@ -1,8 +1,28 @@
 {
   "name": "web",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "typecheck": "nuxi typecheck",
+    "lint": "echo 'lint placeholder'"
+  },
   "dependencies": {
-    "@op/shared": "workspace:*"
+    "nuxt": "^4.4.2",
+    "@nuxt/ui": "^4.5.1",
+    "@vueuse/core": "^14.2.1",
+    "@prisma/client": "^7.5.0",
+    "@op/shared": "workspace:*",
+    "zod": "^4.3.6",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "ofetch": "^1.5.1",
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10"
   }
 }
