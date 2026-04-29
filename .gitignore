@@ -10,3 +10,4 @@ backups/
 *.tsbuildinfo
 .claude/
 .serena/
+.gitnexus
