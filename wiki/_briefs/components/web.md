@@ -1,0 +1,54 @@
+## Brief: components/web.md
+
+Focus: The `web` application — entry points, public surface, main flows.
+
+Files to read first:
+- `apps/web/package.json`
+
+
+
+
+Package snapshot:
+```json
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "typecheck": "nuxi typecheck",
+    "lint": "echo 'lint placeholder'",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^4.5.1",
+    "@ps/shared": "workspace:*",
+    "@prisma/client": "^7.5.0",
+    "@vueuse/core": "^14.2.1",
+    "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
+    "date-fns": "^4.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "nuxt": "^4.4.2",
+    "ofetch": "^1.5.1",
+    "vue-chartjs": "^5.3.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
+
+```
+
+
+
+GitNexus queries:
+- `gitnexus_cypher` with `MATCH (f:File) WHERE f.path STARTS WITH "apps/web/" RETURN f.path LIMIT 30`
+- `gitnexus_query` with "main flow in web"
+
+Target: 10-15 KB with a sequence diagram + Public API table.

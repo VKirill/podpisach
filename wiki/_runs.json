@@ -1,0 +1,116 @@
+{
+  "overview.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 14463
+  },
+  "decisions.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 24971
+  },
+  "architecture.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 22387
+  },
+  "gotchas.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 21701
+  },
+  "deployment.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 13900
+  },
+  "data-model.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 23680
+  },
+  "active-areas.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 11397
+  },
+  "active-tasks.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 243
+  },
+  "components/api.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 21637
+  },
+  "components/attribution.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 14070
+  },
+  "components/bot.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 17338
+  },
+  "components/config.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 16331
+  },
+  "components/integrations.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 16341
+  },
+  "components/jobs.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 10982
+  },
+  "components/max.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 14328
+  },
+  "components/shared.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 16884
+  },
+  "components/telegram.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 15619
+  },
+  "components/web.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 18819
+  },
+  "gaps.md": {
+    "model": "GPT-5.5",
+    "fallback": false,
+    "date": "2026-04-29",
+    "size": 11881
+  }
+}

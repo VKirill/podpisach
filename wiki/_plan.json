@@ -1,0 +1,68 @@
+{
+  "pages": [
+    "overview.md",
+    "decisions.md",
+    "architecture.md",
+    "gotchas.md",
+    "deployment.md",
+    "data-model.md",
+    "active-areas.md",
+    "active-tasks.md",
+    "components/api.md",
+    "components/attribution.md",
+    "components/bot.md",
+    "components/config.md",
+    "components/integrations.md",
+    "components/jobs.md",
+    "components/max.md",
+    "components/shared.md",
+    "components/telegram.md",
+    "components/web.md",
+    "gaps.md"
+  ],
+  "tiers": [
+    {
+      "tier": 0,
+      "pages": [
+        "overview.md",
+        "decisions.md"
+      ]
+    },
+    {
+      "tier": 1,
+      "pages": [
+        "architecture.md",
+        "gotchas.md",
+        "deployment.md",
+        "data-model.md"
+      ]
+    },
+    {
+      "tier": 2,
+      "pages": [
+        "active-areas.md",
+        "active-tasks.md",
+        "components/api.md",
+        "components/attribution.md",
+        "components/bot.md",
+        "components/config.md",
+        "components/integrations.md",
+        "components/jobs.md",
+        "components/max.md",
+        "components/shared.md",
+        "components/telegram.md",
+        "components/web.md",
+        "gaps.md"
+      ]
+    }
+  ],
+  "rawPlan": "## Wiki Plan (deterministic)\n\n### Tier 0\n- overview.md\n- decisions.md\n\n### Tier 1\n- architecture.md\n- gotchas.md\n- deployment.md\n- data-model.md\n\n### Tier 2\n- active-areas.md\n- active-tasks.md\n- components/api.md\n- components/attribution.md\n- components/bot.md\n- components/config.md\n- components/integrations.md\n- components/jobs.md\n- components/max.md\n- components/shared.md\n- components/telegram.md\n- components/web.md\n- gaps.md\n",
+  "planModelName": "deterministic",
+  "created": "2026-04-29T17:48:46.331Z",
+  "graphSummary": {
+    "communities": 0,
+    "routePrefixes": 0,
+    "apps": 3,
+    "hasDb": false
+  }
+}

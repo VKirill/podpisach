@@ -1,0 +1,36 @@
+{
+  "scannedAt": "2026-04-29T18:17:02.799Z",
+  "threshold": 0.5,
+  "stats": {
+    "pagesScanned": 21,
+    "paragraphsScanned": 490,
+    "clustersFound": 1,
+    "totalDuplicates": 1
+  },
+  "clusters": [
+    {
+      "id": "c001",
+      "avgSimilarity": 0.652,
+      "minSimilarity": 0.652,
+      "canonicalOwner": "gotchas.md",
+      "canonicalHeading": "Migration SQL is the real deploy artifact, not only `schema.prisma`",
+      "canonicalAnchor": "migration-sql-is-the-real-deploy-artifact-not-only-schemaprisma",
+      "occurrences": [
+        {
+          "page": "deployment.md",
+          "lineStart": 215,
+          "lineEnd": 215,
+          "isCanonical": false,
+          "text": "**Check**: app startup logs for `📦 Применение миграций...`. The web entrypoint runs `npx prisma migrate deploy --schema prisma/schema.prisma` (`apps/web/docker-entrypoint.sh:10-12`). The initial migration file creates all base tables, indexes, and foreign keys (`prisma/migrations/0001_init/migration.sql:25-382`)."
+        },
+        {
+          "page": "gotchas.md",
+          "lineStart": 264,
+          "lineEnd": 264,
+          "isCanonical": true,
+          "text": "**Problem**: The web entrypoint runs `npx prisma migrate deploy --schema prisma/schema.prisma` (`apps/web/docker-entrypoint.sh:10-12`). The checked-in initial migration creates tables, indexes, and foreign keys (`prisma/migrations/0001_init/migration.sql:25-382`)."
+        }
+      ]
+    }
+  ]
+}
